@@ -1,10 +1,8 @@
 import numpy as np
 import pandas as pd
-
 from src.evaluate import labels_to_index
 
 BIN_EDGES = [0.0, 0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
-
 
 def reliability_table(y, proba: np.ndarray):
     """Returns (table, ece). ece = average gap between predicted and observed,

@@ -68,7 +68,6 @@ def test_baseline_b_matches_hand_calculation():
     assert p[CLASSES.index("SI")] == pytest.approx((2 + alpha * pa_si) / (8 + alpha))
     assert p[CLASSES.index("KC")] == pytest.approx((0 + alpha * pa_other) / (8 + alpha))
 
-
 def test_large_alpha_approaches_baseline_a(toy):
     train, val = split(toy, "dev")
     pa = PitcherMixBaseline().fit(train).predict_proba(val)

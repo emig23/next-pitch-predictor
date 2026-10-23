@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from src.features import CLASSES, FEATURE_COLUMNS
 
 PREV_COLS = ["prev_pitch_1", "prev_pitch_2", "prev_pitch_3"]
@@ -10,7 +9,6 @@ RESULT_CATS = ["NONE", "ball", "called_strike", "swinging_strike", "foul", "othe
 ID_COL = "pitcher_id"
 
 NUMERIC_COLS = [c for c in FEATURE_COLUMNS if c not in PREV_COLS + [RESULT_COL, ID_COL]]
-
 
 class FeatureEncoder:
     """use_pitcher_id=True  -> global model (adds one 0/1 column per training pitcher)

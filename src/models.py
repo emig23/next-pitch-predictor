@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
-
 from src.encoding import ID_COL, FeatureEncoder
 from src.features import CLASSES
 
@@ -12,7 +11,6 @@ EARLY_STOPPING_ROUNDS = 40
 
 GLOBAL_PARAMS = dict(max_depth=4, min_child_weight=10)
 PER_PITCHER_PARAMS = dict(max_depth=3, min_child_weight=5)
-
 
 def base_params(seed: int = 0) -> dict:
     return dict(
@@ -27,13 +25,9 @@ def base_params(seed: int = 0) -> dict:
         n_jobs=-1,
     )
 
-
 def apply_floor(p: np.ndarray, floor: float) -> np.ndarray:
-    """No class may get (almost) zero probability: a pitch that never happened in
-    training but shows up in the test season would otherwise cost infinite log loss."""
     p = np.maximum(p, floor)
     return p / p.sum(axis=1, keepdims=True)
-
 
 class XGBPitchModel:
     """One multi-class XGBoost model on a set of rows (all pitchers, or one pitcher).
@@ -76,7 +70,7 @@ class XGBPitchModel:
         if eval_set is not None:
             Xv_feats, yv = eval_set
             yv = pd.Series(yv).reset_index(drop=True)
-            keep = yv.isin(self.present_).to_numpy()   # eval labels must be classes it trains on
+            keep = yv.isin(self.present_).to_numpy()  
             # keep it a DataFrame (with column names) so it matches the training table
             Xv = self.enc_.transform(Xv_feats).iloc[np.flatnonzero(keep)]
             model = XGBClassifier(n_estimators=MAX_TREES,
@@ -102,7 +96,6 @@ class XGBPitchModel:
         for j, c in enumerate(self.present_):
             full[:, CLASSES.index(c)] = present[:, j]
         return apply_floor(full, self.floor)
-
 
 class PerPitcherXGB:
     """A separate XGBPitchModel for each pitcher (no pitcher-ID columns)."""

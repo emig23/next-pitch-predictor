@@ -1,12 +1,3 @@
-"""Feature pipeline for next-pitch prediction.
-
-Every feature is known BEFORE the pitch is thrown. Nothing here may use the
-current pitch's type, result, velocity, spin or location.
-
-Input: the clean DataFrame from clean_data.py, sorted by
-pitcher, game_pk, at_bat_number, pitch_number (one row per pitch).
-Output: a DataFrame with the same index and exactly FEATURE_COLUMNS.
-"""
 import pandas as pd
 
 SORT_KEYS = ["pitcher", "game_pk", "at_bat_number", "pitch_number"]

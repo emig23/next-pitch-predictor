@@ -42,7 +42,7 @@ print(final[["rank", "player_name", "pitcher", "total_pitches"]].to_string(index
 
 final[["pitcher", "player_name", "rank"]].to_csv("data/final_pitchers.csv", index=False)
 
-# Pitch mix per final pitcher, for you to read
+# Pitch mix per final pitcher
 pd.set_option("display.float_format", "{:.1%}".format)
 for pid, name in zip(final["pitcher"], final["player_name"]):
     print(f"\n{name}")

@@ -1,8 +1,6 @@
 import json
 import os
-
 import pandas as pd
-
 from src.baselines import CountBaseline, PitcherMixBaseline
 from src.calibration import reliability_table
 from src.evaluate import evaluate, per_pitcher
@@ -53,10 +51,8 @@ def pick_floor(set_floor, predict):
     set_floor(best)
     return best, scores
 
-
 def _set_global_floor(f):
     global_model.floor = f
-
 
 g_floor, g_scores = pick_floor(_set_global_floor, lambda: global_model.predict_proba(fva))
 p_floor, p_scores = pick_floor(pp_model.set_floor, lambda: pp_model.predict_proba(fva))

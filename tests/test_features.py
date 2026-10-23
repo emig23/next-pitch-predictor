@@ -1,15 +1,12 @@
 from pathlib import Path
-
 import pandas as pd
 import pytest
-
 from src.features import FEATURE_COLUMNS, build_features
 
 DATA = Path("data/clean/pitches.parquet")
 
 # Columns that describe the current pitch itself. None may be a feature.
 FORBIDDEN = {"pitch_type", "target", "description", "type"}
-
 
 @pytest.fixture(scope="module")
 def sample():
@@ -23,14 +20,12 @@ def sample():
         parts.append(d[d["game_pk"].isin(games)])
     return pd.concat(parts).reset_index(drop=True)
 
-
 def test_no_current_pitch_columns(sample):
     feats = build_features(sample)
     assert not FORBIDDEN & set(feats.columns)
     assert not FORBIDDEN & set(FEATURE_COLUMNS)
     assert list(feats.columns) == FEATURE_COLUMNS
     assert len(feats) == len(sample)
-
 
 def test_current_pitch_outcome_does_not_change_its_own_features(sample):
     base = build_features(sample)
@@ -44,7 +39,6 @@ def test_current_pitch_outcome_does_not_change_its_own_features(sample):
         out = build_features(changed)
         pd.testing.assert_frame_equal(base.loc[[i]], out.loc[[i]])
 
-
 @pytest.mark.parametrize("cut", [40, 200, 500])
 def test_features_do_not_use_future_rows(sample, cut):
     cut = min(cut, len(sample) - 1)
@@ -53,7 +47,6 @@ def test_features_do_not_use_future_rows(sample, cut):
     pd.testing.assert_frame_equal(
         full.iloc[:cut].reset_index(drop=True), part.reset_index(drop=True)
     )
-
 
 def test_previous_pitch_resets_each_at_bat(sample):
     feats = build_features(sample)

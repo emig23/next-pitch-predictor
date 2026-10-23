@@ -13,7 +13,6 @@ def edge_warning(name, value, grid):
     if value in (min(grid), max(grid)):
         print(f"WARNING: best {name} {value:g} is at the edge of its grid; consider widening it.")
 
-
 df = pd.read_parquet("data/clean/pitches.parquet")
 train, val = split(df, "dev")
 yva = val["target"]

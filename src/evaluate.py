@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-
 from src.features import CLASSES
 
 CLASS_INDEX = {c: i for i, c in enumerate(CLASSES)}
@@ -13,7 +12,6 @@ def labels_to_index(y) -> np.ndarray:
         raise ValueError(f"unknown labels: {sorted(unknown)}")
     return y.map(CLASS_INDEX).to_numpy()
 
-
 def check_proba(proba: np.ndarray, n_rows: int) -> None:
     if proba.shape != (n_rows, len(CLASSES)):
         raise ValueError(f"proba shape {proba.shape}, expected {(n_rows, len(CLASSES))}")
@@ -24,18 +22,15 @@ def check_proba(proba: np.ndarray, n_rows: int) -> None:
     if not np.allclose(proba.sum(axis=1), 1.0, atol=1e-6):
         raise ValueError("proba rows do not sum to 1")
 
-
 def log_loss(y, proba: np.ndarray) -> float:
     idx = labels_to_index(y)
     p_true = proba[np.arange(len(idx)), idx]
     return float(-np.mean(np.log(np.clip(p_true, EPS, 1.0))))
 
-
 def top_k_accuracy(y, proba: np.ndarray, k: int) -> float:
     idx = labels_to_index(y)
     top_k = np.argsort(-proba, axis=1)[:, :k]
     return float((top_k == idx[:, None]).any(axis=1).mean())
-
 
 def evaluate(y, proba: np.ndarray) -> dict:
     """Aggregate metrics. n_floored counts rows where the true class got
@@ -51,7 +46,6 @@ def evaluate(y, proba: np.ndarray) -> dict:
         "top2": top_k_accuracy(y, proba, 2),
         "n_floored": int((p_true < EPS).sum()),
     }
-
 
 def per_pitcher(df: pd.DataFrame, proba: np.ndarray) -> pd.DataFrame:
     """Same metrics, one row per pitcher. df must be the rows proba was made for."""
