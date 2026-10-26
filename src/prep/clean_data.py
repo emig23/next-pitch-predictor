@@ -18,11 +18,9 @@ REQUIRED = [
     "stand", "p_throws", "home_team", "away_team",
     "inning", "inning_topbot", "balls", "strikes", "outs_when_up",
     "on_1b", "on_2b", "on_3b", "home_score", "away_score", "bat_score", "fld_score",
-    "at_bat_number", "pitch_number", "pitch_type",
-    # Outcome columns of the pitch itself. Features may only use these
-    # SHIFTED to the previous pitch, never the current row.
-    "description", "type",
+    "at_bat_number", "pitch_number", "pitch_type", "description", "type",
 ]
+
 OPTIONAL = ["n_thruorder_pitcher"]
 
 frames = []

@@ -10,8 +10,7 @@ df = pd.concat([pd.read_parquet(f) for f in glob.glob("data/selection/*.parquet"
 df["season"] = pd.to_datetime(df["game_date"]).dt.year
 df = df.sort_values(["game_pk", "at_bat_number", "pitch_number"])
 
-# Starter = pitcher who threw their team's first pitch of the game.
-# Top of an inning means the home team is pitching, bottom means the away team.
+# Only starters used
 first = (df.groupby(["game_pk", "inning_topbot"], sort=False)
            .head(1)[["game_pk", "inning_topbot", "pitcher"]]
            .rename(columns={"pitcher": "starter"}))
