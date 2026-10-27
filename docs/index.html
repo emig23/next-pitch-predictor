@@ -298,7 +298,6 @@ function showTab(t){
     $('tab-'+x).setAttribute('aria-selected', x===t ? 'true':'false');
   });
   if(t!=='replay') stopAuto();
-  try{ history.replaceState(null,'','#'+t); }catch(e){}
 }
 document.querySelectorAll('.tab[data-tab]').forEach(function(b){ b.addEventListener('click',function(){ showTab(b.dataset.tab); }); });
 
