@@ -2,8 +2,8 @@ import json
 import numpy as np
 import pytest
 from app.demo_export import SHOWN, build_demo, pick_games
-from src.final_eval import fit_all_and_predict
-from src.splits import split
+from src.evaluation.final_eval import fit_all_and_predict
+from src.dataset.splits import split
 from tests.test_final import CFG_BASE, CFG_DEV, make_raw
 
 @pytest.fixture(scope="module")
@@ -21,7 +21,7 @@ def test_two_games_per_pitcher_and_rule_is_deterministic(fitted):
 
 def test_picks_are_never_the_best_or_worst_game(fitted):
     test, probas = fitted
-    from src.final_eval import per_pitch_loss
+    from src.evaluation.final_eval import per_pitch_loss
     test = test.assign(loss=per_pitch_loss(test["target"], probas["Global XGBoost"]))
     for pid, gpk in pick_games(test, probas["Global XGBoost"]):
         g = test[test["pitcher"] == pid].groupby("game_pk")["loss"].mean().sort_values()

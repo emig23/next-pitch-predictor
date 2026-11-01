@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.features import CLASSES
+from src.dataset.features import CLASSES
 
 CLASS_INDEX = {c: i for i, c in enumerate(CLASSES)}
 EPS = 1e-12  

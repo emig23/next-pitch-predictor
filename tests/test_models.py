@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 import pytest
-from src.calibration import reliability_table
-from src.encoding import (PREV_CATS, PREV_COLS, RESULT_CATS, FeatureEncoder)
-from src.evaluate import CLASSES, check_proba, log_loss
-from src.features import FEATURE_COLUMNS
-from src.models import (GLOBAL_PARAMS, PER_PITCHER_PARAMS, PerPitcherXGB,
+from src.evaluation.calibration import reliability_table
+from src.dataset.encoding import (PREV_CATS, PREV_COLS, RESULT_CATS, FeatureEncoder)
+from src.evaluation.evaluate import CLASSES, check_proba, log_loss
+from src.dataset.features import FEATURE_COLUMNS
+from src.modeling.models import (GLOBAL_PARAMS, PER_PITCHER_PARAMS, PerPitcherXGB,
                         XGBPitchModel)
 
 SHARES = [c for c in FEATURE_COLUMNS if c.startswith("share_")]

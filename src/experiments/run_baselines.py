@@ -1,9 +1,9 @@
 import json
 import os
 import pandas as pd
-from src.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
-from src.evaluate import evaluate, per_pitcher
-from src.splits import split
+from src.modeling.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
+from src.dataset.evaluate import evaluate, per_pitcher
+from src.dataset.splits import split
 
 ALPHA_GRID = [1, 2, 5, 10, 20, 50, 100, 200, 500]      
 C_ALPHA_GRID = [20, 50, 100, 200, 500, 1000, 2000, 5000]   

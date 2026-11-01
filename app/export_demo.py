@@ -2,9 +2,9 @@ import json
 import sys
 import pandas as pd
 from app.demo_export import build_demo
-from src.evaluate import log_loss
-from src.final_eval import fit_all_and_predict, load_configs
-from src.splits import split
+from src.evaluation.evaluate import log_loss
+from src.evaluation.final_eval import fit_all_and_predict, load_configs
+from src.dataset.splits import split
 
 TOLERANCE = 0.002
 

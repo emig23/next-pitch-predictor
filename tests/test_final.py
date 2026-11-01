@@ -2,11 +2,11 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
-from src import run_final
-from src.evaluate import CLASSES
-from src.final_eval import (bootstrap_by_game, check_criteria,
+from src.experiments import run_final
+from src.evaluation.evaluate import CLASSES
+from src.evaluation.final_eval import (bootstrap_by_game, check_criteria,
                             fit_all_and_predict, load_configs)
-from src.splits import split
+from src.dataset.splits import split
 
 DESCS = ["ball", "called_strike", "swinging_strike", "foul", "hit_into_play"]
 
@@ -78,7 +78,7 @@ def test_final_fit_never_sees_the_test_season(raw):
 
 def test_models_beat_uniform_where_signal_exists(fitted):
     test, probas = fitted
-    from src.evaluate import log_loss
+    from src.evaluation.evaluate import log_loss
     assert log_loss(test["target"], probas["C"]) < log_loss(test["target"], probas["B"])
 
 def test_bootstrap_intervals_contain_the_point_estimate(fitted):

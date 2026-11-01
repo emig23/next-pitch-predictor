@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 import pytest
-from src.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
-from src.evaluate import (CLASSES, check_proba, evaluate, log_loss,
+from src.modeling.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
+from src.evaluation.evaluate import (CLASSES, check_proba, evaluate, log_loss,
                           top_k_accuracy)
-from src.splits import split
+from src.dataset.splits import split
 
 @pytest.fixture(scope="module")
 def toy():

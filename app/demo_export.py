@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
-from src.final_eval import per_pitch_loss
-from src.features import CLASSES
+from src.evaluation.final_eval import per_pitch_loss
+from src.dataset.features import CLASSES
 
 SHOWN = ["B", "C", "Global XGBoost"]
 MIN_STARTER_PITCHES = 60

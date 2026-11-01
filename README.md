@@ -71,16 +71,12 @@ The gain in top-1 accuracy is small (42.2% vs 41.0% for C). Most of the improvem
 ## Project Structure
 ```
 next-pitch-predictor/
-├── src/               # data prep, features, baselines, models, evaluation
+├── src/
 │   ├── prep/          # data pulling, pitcher selection, cleaning
-│   ├── baselines.py
-│   ├── features.py
-│   ├── models.py
-│   ├── evaluate.py
-│   ├── calibration.py
-│   ├── run_baselines.py
-│   ├── run_models.py
-│   └── run_final.py
+│   ├── dataset/       # features, encoding, train/test splits
+│   ├── modeling/      # baselines and XGBoost models
+│   ├── evaluation/    # metrics, calibration, final evaluation
+│   └── experiments/   # run_baselines, run_models, run_final
 ├── tests/             # unit and leakage tests
 ├── results/           # saved settings and final results
 ├── app/               # demo data export
@@ -111,13 +107,13 @@ python -m src.prep.clean_data
 
 **Run the baselines and models:**
 ```bash
-python -m src.run_baselines
-python -m src.run_models
+python -m src.experiments.run_baselines
+python -m src.experiments.run_models
 ```
 
 **Final evaluation on the 2026 season:**
 ```bash
-python -m src.run_final --confirm-final
+python -m src.experiments.run_final --confirm-final
 ```
 `results/final_results.json` is already committed, so this refuses to run again unless that file is deleted. That is on purpose, because the test season is meant to be used once.
 

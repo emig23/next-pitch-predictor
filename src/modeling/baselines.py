@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.features import CLASSES
+from src.dataset.features import CLASSES
 
 K = len(CLASSES)
 

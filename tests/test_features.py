@@ -1,7 +1,7 @@
 from pathlib import Path
 import pandas as pd
 import pytest
-from src.features import FEATURE_COLUMNS, build_features
+from src.dataset.features import FEATURE_COLUMNS, build_features
 
 DATA = Path("data/clean/pitches.parquet")
 

@@ -1,8 +1,8 @@
 import numpy as np
 import pandas as pd
 from xgboost import XGBClassifier
-from src.encoding import ID_COL, FeatureEncoder
-from src.features import CLASSES
+from src.dataset.encoding import ID_COL, FeatureEncoder
+from src.dataset.features import CLASSES
 
 K = len(CLASSES)
 DEFAULT_FLOOR = 1e-3

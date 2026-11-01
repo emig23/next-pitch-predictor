@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from src.features import CLASSES, FEATURE_COLUMNS
+from src.dataset.features import CLASSES, FEATURE_COLUMNS
 
 PREV_COLS = ["prev_pitch_1", "prev_pitch_2", "prev_pitch_3"]
 PREV_CATS = CLASSES + ["NONE"]

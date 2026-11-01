@@ -1,10 +1,10 @@
 import json
 import numpy as np
 import pandas as pd
-from src.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
-from src.evaluate import check_proba, labels_to_index
-from src.features import build_features
-from src.models import PerPitcherXGB, XGBPitchModel
+from src.modeling.baselines import CountBaseline, CountHandBaseline, PitcherMixBaseline
+from src.evaluation.evaluate import check_proba, labels_to_index
+from src.dataset.features import build_features
+from src.modeling.models import PerPitcherXGB, XGBPitchModel
 
 MODEL_ORDER = ["A", "B", "C", "Global XGBoost", "Per-pitcher XGBoost"]
 

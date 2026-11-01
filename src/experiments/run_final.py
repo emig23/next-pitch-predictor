@@ -3,10 +3,10 @@ import json
 import os
 import sys
 import pandas as pd
-from src.evaluate import evaluate, per_pitcher
-from src.final_eval import (MODEL_ORDER, bootstrap_by_game, check_criteria,
+from src.evaluation.evaluate import evaluate, per_pitcher
+from src.evaluation.final_eval import (MODEL_ORDER, bootstrap_by_game, check_criteria,
                             fit_all_and_predict, load_configs)
-from src.splits import split
+from src.dataset.splits import split
 
 OUT_JSON = "results/final_results.json"
 OUT_CSV = "results/final_per_pitcher.csv"
