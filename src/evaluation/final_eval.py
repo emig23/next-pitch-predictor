@@ -16,6 +16,11 @@ def load_configs(dev_path: str = "results/dev_config.json",
         base = json.load(f)
     return dev, base
 
+def fit_global_model(feats: pd.DataFrame, y: pd.Series, dev: dict) -> XGBPitchModel:
+    g = dev["global"]
+    return XGBPitchModel(g["params"], use_pitcher_id=True, floor=g["floor"]
+                        ).fit(feats, y, n_estimators=int(g["n_estimators"]))
+
 def fit_all_and_predict(train: pd.DataFrame, test: pd.DataFrame, dev: dict, base: dict) -> dict:
     """Refit every predictor on `train` with the saved settings; return {name: proba on test}."""
     b, c = base["B"], base["C"]
@@ -28,9 +33,7 @@ def fit_all_and_predict(train: pd.DataFrame, test: pd.DataFrame, dev: dict, base
     ftr, fte = build_features(train), build_features(test)
     ytr = train["target"]
 
-    g = dev["global"]
-    gm = XGBPitchModel(g["params"], use_pitcher_id=True, floor=g["floor"]
-                       ).fit(ftr, ytr, n_estimators=int(g["n_estimators"]))
+    gm = fit_global_model(ftr, ytr, dev)
     out["Global XGBoost"] = gm.predict_proba(fte)
 
     p = dev["per_pitcher"]
