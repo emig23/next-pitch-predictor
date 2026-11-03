@@ -10,6 +10,7 @@ import os
 from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 from api.predict import PITCH_NAMES, predict_probabilities
 from api.schemas import (GameOut, GamePitch, PitcherOut, PitchProbability, PredictRequest,
@@ -18,6 +19,9 @@ from db.connection import apply_schema, find_database_url, make_engine
 from src.modeling.persistence import load_model
 
 DEFAULT_MODEL_DIR = "models/global_xgb"
+# Websites allowed to call this API from a browser. Override with CORS_ORIGINS (comma
+# separated), e.g. to add http://localhost:8080 while developing the page.
+DEFAULT_ORIGINS = ["https://emig23.github.io"]
 log = logging.getLogger("api")
 
 def create_app(model_dir: str | None = None, engine=None) -> FastAPI:
@@ -43,6 +47,10 @@ def create_app(model_dir: str | None = None, engine=None) -> FastAPI:
     app = FastAPI(title="Next Pitch Predictor API", version="1.0.0", lifespan=lifespan,
                   description="Forecasts the probability of each pitch type before the "
                               "pitch is thrown.")
+
+    origins = [o.strip() for o in os.environ.get("CORS_ORIGINS", "").split(",") if o.strip()]
+    app.add_middleware(CORSMiddleware, allow_origins=origins or DEFAULT_ORIGINS,
+                       allow_methods=["GET", "POST"], allow_headers=["Content-Type"])
 
     def db(request: Request):
         eng = request.app.state.engine

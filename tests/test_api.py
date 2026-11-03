@@ -195,3 +195,21 @@ def test_the_api_still_starts_and_predicts_when_the_database_is_unreachable(trai
     with TestClient(create_app(model_dir=trained[1], engine=dead)) as client:
         assert client.get("/health").json()["database"] is False
         assert client.post("/predict", json=sample_body(trained)).status_code == 200
+
+def test_cors_allows_the_demo_site_and_nobody_else(client, trained):
+    ask = {"Access-Control-Request-Method": "POST", "Access-Control-Request-Headers": "content-type"}
+    ok = client.options("/predict", headers={**ask, "Origin": "https://emig23.github.io"})
+    assert ok.status_code == 200
+    assert ok.headers["access-control-allow-origin"] == "https://emig23.github.io"
+    other = client.options("/predict", headers={**ask, "Origin": "https://evil.example"})
+    assert "access-control-allow-origin" not in other.headers
+    real = client.post("/predict", json=sample_body(trained),
+                       headers={"Origin": "https://emig23.github.io"})
+    assert real.headers["access-control-allow-origin"] == "https://emig23.github.io"
+
+def test_extra_origins_can_be_added_with_an_environment_variable(trained, monkeypatch):
+    monkeypatch.setenv("CORS_ORIGINS", "http://localhost:8080, https://emig23.github.io")
+    with TestClient(create_app(model_dir=trained[1])) as c:
+        r = c.options("/health", headers={"Origin": "http://localhost:8080",
+                                          "Access-Control-Request-Method": "GET"})
+        assert r.headers["access-control-allow-origin"] == "http://localhost:8080"
