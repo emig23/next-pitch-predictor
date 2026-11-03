@@ -25,10 +25,10 @@ def get_database_url() -> str:
     return url
 
 def make_engine(url: str | None = None, schema: str | None = None) -> Engine:
-    """`schema` points the connection at a separate Postgres schema, used by the tests so
-    they never touch real tables."""
-    kwargs = {"connect_args": {"options": f"-csearch_path={schema}"}} if schema else {}
-    return create_engine(url or get_database_url(), **kwargs)
+    connect_args = {"connect_timeout": 5}
+    if schema:
+        connect_args["options"] = f"-csearch_path={schema}"
+    return create_engine(url or get_database_url(), connect_args=connect_args)
 
 def apply_schema(engine: Engine) -> None:
     with engine.begin() as conn:

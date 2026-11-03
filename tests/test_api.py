@@ -3,16 +3,25 @@ import numpy as np
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
+from sqlalchemy import text
 from api.main import create_app
+from db.connection import make_engine
 from db.load import load_clean
 from src.dataset.features import CLASSES, build_features
 from src.modeling.models import GLOBAL_PARAMS, XGBPitchModel
 from src.modeling.persistence import load_model, save_model
-from tests.test_db import engine, make_clean, needs_db
+from tests.test_db import engine, make_clean, needs_db  # noqa: F401  (engine is a fixture)
 from tests.test_final import make_raw
 
 REAL_MODEL = Path("models/global_xgb")
 REAL_DATA = Path("data/clean/pitches.parquet")
+
+@pytest.fixture(autouse=True)
+def api_ignores_the_env_database(monkeypatch):
+    """The app looks for DATABASE_URL at startup. Without this, every test that builds an app
+    would try to reach your real database (and wait if it is slow or down). Tests that need a
+    database pass one in explicitly through create_app(engine=...)."""
+    monkeypatch.setattr("api.main.find_database_url", lambda: None)
 
 @pytest.fixture(scope="module")
 def trained(tmp_path_factory):
@@ -163,3 +172,26 @@ def test_database_endpoints_say_503_when_no_database_is_configured(trained, monk
         assert c.get("/games/1").status_code == 503
         assert c.get("/health").json()["database"] is False
         assert c.post("/predict", json=sample_body(trained)).status_code == 200
+
+@needs_db
+def test_starting_against_an_empty_database_creates_the_tables(trained):
+    import uuid
+    name = f"test_{uuid.uuid4().hex[:10]}"
+    admin = make_engine()
+    with admin.begin() as c:
+        c.execute(text(f"CREATE SCHEMA {name}"))
+    empty = make_engine(schema=name)          # a brand-new database: no tables yet
+    try:
+        with TestClient(create_app(model_dir=trained[1], engine=empty)) as client:
+            assert client.get("/pitchers").json() == []
+    finally:
+        empty.dispose()
+        with admin.begin() as c:
+            c.execute(text(f"DROP SCHEMA {name} CASCADE"))
+        admin.dispose()
+
+def test_the_api_still_starts_and_predicts_when_the_database_is_unreachable(trained):
+    dead = make_engine("postgresql+psycopg://nobody:nothing@127.0.0.1:1/none")
+    with TestClient(create_app(model_dir=trained[1], engine=dead)) as client:
+        assert client.get("/health").json()["database"] is False
+        assert client.post("/predict", json=sample_body(trained)).status_code == 200

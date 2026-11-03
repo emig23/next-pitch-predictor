@@ -1,0 +1,27 @@
+# The prediction API in a container:  docker build -t pitch-api 
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
+
+# XGBoost needs the OpenMP runtime, which the slim image does not include
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+
+# Install packages first so Docker can reuse this layer when only our code changes
+COPY requirements-api.txt .
+RUN pip install --no-cache-dir -r requirements-api.txt
+
+COPY api/ api/
+COPY db/ db/
+COPY src/ src/
+COPY models/ models/
+
+# Do not run as root inside the container
+RUN useradd --create-home app
+USER app
+
+EXPOSE 8000
+CMD ["sh", "-c", "uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

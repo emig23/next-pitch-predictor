@@ -5,6 +5,7 @@ GET  /games/{game_pk} one game's pitches, in order
 POST /predict         probabilities for the next pitch given a game situation
 """
 import json
+import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -13,10 +14,11 @@ from sqlalchemy import text
 from api.predict import PITCH_NAMES, predict_probabilities
 from api.schemas import (GameOut, GamePitch, PitcherOut, PitchProbability, PredictRequest,
                          PredictResponse)
-from db.connection import find_database_url, make_engine
+from db.connection import apply_schema, find_database_url, make_engine
 from src.modeling.persistence import load_model
 
 DEFAULT_MODEL_DIR = "models/global_xgb"
+log = logging.getLogger("api")
 
 def create_app(model_dir: str | None = None, engine=None) -> FastAPI:
     """`engine` can be passed in (the tests do); otherwise it is built from DATABASE_URL
@@ -25,10 +27,15 @@ def create_app(model_dir: str | None = None, engine=None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        app.state.model = load_model(model_dir)
+        app.state.model = load_model(model_dir)          # loaded once, not per request
         meta = json.loads((Path(model_dir) / "meta.json").read_text())
         app.state.trained_on = meta.get("extra", {}).get("trained_on_seasons", [])
         app.state.engine = engine or (make_engine() if find_database_url() else None)
+        if app.state.engine is not None:
+            try:        # create the tables if the database is brand new (safe to repeat)
+                apply_schema(app.state.engine)
+            except Exception as exc:                       # noqa: BLE001
+                log.warning("database not ready at startup (%s); predictions still work", exc)
         yield
         if app.state.engine is not None and engine is None:
             app.state.engine.dispose()
@@ -52,7 +59,7 @@ def create_app(model_dir: str | None = None, engine=None) -> FastAPI:
                 with eng.connect() as conn:
                     conn.execute(text("SELECT 1"))
                 database = True
-            except Exception:
+            except Exception:                              # noqa: BLE001
                 database = False
         return {"status": "ok", "model_loaded": True, "database": database,
                 "model_trained_on_seasons": request.app.state.trained_on}
