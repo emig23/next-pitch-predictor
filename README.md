@@ -1,3 +1,5 @@
+![CI](https://github.com/emig23/next-pitch-predictor/actions/workflows/ci.yml/badge.svg)
+
 # Next Pitch Predictor
 
 Predicts the next pitch type a starting pitcher will throw, using only what is known before the pitch (count, score, baserunners, batter handedness and what he has already thrown in the game), with an XGBoost model trained on MLB Statcast data and tested once on the 2026 season.

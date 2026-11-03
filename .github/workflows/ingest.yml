@@ -1,0 +1,26 @@
+name: Daily ingestion
+
+on:
+  schedule:
+    - cron: "0 11 * * *"      # 11:00 UTC every day = 5-6 AM Central, after the games' data is up
+  workflow_dispatch:           # also lets you run it by hand from the Actions tab
+
+concurrency:
+  group: ingest
+  cancel-in-progress: false    # never run two ingestions at once
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Ingest the last 3 days
+        run: python -m ingest.ingest --days 3
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
