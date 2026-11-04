@@ -80,7 +80,6 @@ function livePredict(){
   clearTimeout(live.timer);
   live.timer = setTimeout(function(){
     var body = buildRequest(), my = ++live.seq;
-    $('lReq').textContent = 'POST '+API+'/predict\n'+JSON.stringify(body,null,2);
     $('lState').innerHTML = '<span class="spin"></span>Asking the model…';
     apiFetch('/predict', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}, 60000).then(function(r){
       return r.json().then(function(j){ if(!r.ok) throw new Error(r.status===422?'invalid':'http'); return j; });

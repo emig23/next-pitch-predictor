@@ -202,8 +202,5 @@ input[type=number]{background:var(--surface);border:1px solid var(--line);border
 .spin{display:inline-block;width:12px;height:12px;border:2px solid var(--line);border-top-color:var(--model);border-radius:50%;animation:sp .8s linear infinite;vertical-align:-1px;margin-right:6px}
 @keyframes sp{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.spin{animation:none}}
-details.req{margin-top:14px}
-details.req summary{cursor:pointer;font-size:.85rem;color:var(--ink-2)}
-details.req pre{background:var(--surface-2);border-radius:8px;padding:10px 12px;overflow-x:auto;font-size:.78rem;margin:8px 0 0}
 .live-top{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin:6px 0 10px}
 .live-top .big{font-family:var(--display);font-size:2rem;font-weight:700;line-height:1}
